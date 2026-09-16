@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Duo Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="glow a"></div>
+<div class="glow b"></div>
+
+<header>
+  <nav>
+    <a href="index.html" class="logo"><span class="mark">duo</span><span class="sub"><span class="bar"></span><span class="labs">labs</span></span></a>
+    <button class="nav-toggle" id="navToggle">MENU</button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#about">About</a>
+      <a href="index.html#work">Case Studies</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+<div class="nav-scrim" id="navScrim"></div>
+
+<main id="caseRoot"></main>
+<footer>© 2026 DUO LABS — PERFORMANCE MARKETING</footer>
+
+<script src="case-data.js"></script>
+<script>
+  const toggle=document.getElementById('navToggle'),links=document.getElementById('navLinks'),scrim=document.getElementById('navScrim');
+  const closeMenu=()=>{links.classList.remove('open');scrim.classList.remove('open');toggle.textContent='MENU';};
+  const openMenu=()=>{links.classList.add('open');scrim.classList.add('open');toggle.textContent='CLOSE';};
+  toggle.onclick=()=>links.classList.contains('open')?closeMenu():openMenu();
+  scrim.onclick=closeMenu;
+  links.querySelectorAll('a').forEach(a=>a.onclick=closeMenu);
+
+  const id=new URLSearchParams(location.search).get('c');
+  const c=CASES[id], root=document.getElementById('caseRoot');
+  if(!c){
+    root.innerHTML=`<section class="case-hero"><div class="container"><a class="back-link" href="index.html">← Back</a><h1>Case not found</h1></div></section>`;
+  } else {
+    document.title=`${c.name} — Duo Labs`;
+    const order=[];INDUSTRIES.forEach(i=>i.cases.forEach(x=>order.push(x)));
+    const idx=order.indexOf(id);
+    const prev=idx>0?order[idx-1]:order[order.length-1];
+    const next=idx<order.length-1?order[idx+1]:order[0];
+    const stats=c.stats.map(s=>`<div class="chs"><div class="v">${s.v}</div><div class="l">${s.l}</div></div>`).join('');
+    const exec=c.strategy.map(s=>`<li>${s}</li>`).join('');
+    const results=c.results.map(r=>`<div class="result-box"><div class="v">${r.v}</div><div class="l">${r.l}</div></div>`).join('');
+    const proof=c.images.map((img,i)=>`<figure class="proof-fig"><img src="assets/case-images/${img}" alt="${c.captions&&c.captions[i]?c.captions[i]:c.name}">${c.captions&&c.captions[i]?`<figcaption class="cap">${c.captions[i]}</figcaption>`:''}</figure>`).join('');
+    root.innerHTML=`
+      <section class="case-hero"><div class="container">
+        <a class="back-link" href="index.html#work">← Back to all case studies</a>
+        <div class="tag">${c.industry}</div><h1>${c.name}</h1>
+        <div class="meta">${c.market}</div>
+        <div class="case-hero-stats">${stats}</div>
+      </div></section>
+      <section class="case-section"><div class="container">
+        <div class="k">The Situation</div><h2>Where It Started</h2><p>${c.situation}</p>
+      </div></section>
+      <section class="case-section"><div class="container">
+        <div class="k">Strategy &amp; Execution</div><h2>What We Did</h2><ul class="exec-list">${exec}</ul>
+      </div></section>
+      <section class="case-section"><div class="container">
+        <div class="k">Results</div><h2>The Numbers</h2><div class="result-grid">${results}</div>
+      </div></section>
+      <section class="case-section"><div class="container">
+        <div class="k">Proof</div><h2>From The Dashboards</h2>
+        <p style="color:var(--ink-faint);font-size:13px">Sensitive identifiers hidden. Watermarked from Meta Ads Manager, Shopify, and live sales trackers.</p>
+        <div class="proof-imgs">${proof}</div>
+      </div></section>
+      <section class="case-section"><div class="container">
+        <div class="takeaway"><div class="k">Key Takeaway</div><p>${c.takeaway}</p></div>
+      </div></section>
+      <div class="container"><div class="case-nav">
+        <a href="case.html?c=${prev}">← ${CASES[prev].name}</a>
+        <a href="case.html?c=${next}">${CASES[next].name} →</a>
+      </div></div>`;
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
